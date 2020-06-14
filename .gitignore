@@ -10,6 +10,7 @@ docs/_build
 tests/test_*
 *.pyc
 *.d
+third_party/flatbuffers/
 
 cmake-build-debug/
 CMakeFiles/

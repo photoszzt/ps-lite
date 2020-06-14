@@ -36,6 +36,19 @@ else()
   target_link_libraries(pslite PUBLIC ${ZMQ_LIBRARIES})
 endif()
 
+find_package(Flatbuffers REQUIRED PATHS ${PROJECT_SOURCE_DIR}/third_party/flatbuffers/CMake)
+add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/flatbuffers
+                 ${CMAKE_CURRENT_BINARY_DIR}/flatbuffers-build
+                 EXCLUDE_FROM_ALL)
+target_link_libraries(pslite PRIVATE flatbuffers)
+
+file(GLOB_RECURSE FBS_FILES "${PROJECT_SOURCE_DIR}/fb/*.fbs")
+message(STATUS "fbs files are ${FBS_FILES}")
+build_flatbuffers("${FBS_FILES}" "" "message" "" "${PROJECT_SOURCE_DIR}/fb" "" "")
+add_dependencies(pslite message)
+file(GLOB_RECURSE FBS_GEN_FILES "${PROJECT_SOURCE_DIR}/fb/*.h")
+target_sources(pslite PRIVATE "${FBS_GEN_FILES}")
+
 # ---[ Google-protobuf
 # Workaround broken DLAMI. DLAMI ships a broken protoc at /home/ubuntu/anaconda3/bin
 # https://docs.aws.amazon.com/dlami/latest/devguide/overview-base.html

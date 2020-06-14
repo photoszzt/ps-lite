@@ -1,0 +1,46 @@
+namespace PS_Lite.Message;
+
+enum FBRole : ubyte {SERVER, WORKER, SCHEDULER}
+enum FBCommand : ubyte {EMPTY, TERMINATE, ADD_NODE, BARRIER, ACK, HEARTBEAT}
+enum FBDataType : ushort {CHAR, INT8, INT16, INT32, INT64,
+  UINT8, UINT16, UINT32, UINT64,
+  FLOAT, DOUBLE, OTHER} 
+
+table FBNode {
+    role: FBRole;
+    id: int;
+    customer_id: int;
+    hostname: string;
+    port: int;
+    is_recovery: bool;
+}
+
+table FBControl {
+    cmd: FBCommand;
+    node: [FBNode];
+    barrier_group: int;
+    msg_sig: uint64;
+}
+
+table FBMeta {
+    head: int;
+    app_id: int;
+    customer_id: int;
+    timestamp: int;
+    sender: int;
+    recver: int;
+    request: bool = false;
+    push: bool;
+    pull: bool;
+    simple_app: bool = false;
+    body: string;
+    data_type: [FBDataType];
+    control: FBControl;
+    data_size: int;
+    priority: int;
+}
+
+table FBVal {
+    meta: FBMeta;
+    value: [string];
+}
